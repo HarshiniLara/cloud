@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Cloud Storage</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Firebase Cloud Storage Operations</h2>
+
+        <h3>Upload Image</h3>
+        <form id="upload-form">
+            <input type="file" id="file-input" accept="image/*" required>
+            <button type="submit">Upload</button>
+        </form>
+
+        <h3>Delete Image</h3>
+        <form id="delete-form">
+            <input type="text" id="delete-file-name" placeholder="File Name" required>
+            <button type="submit">Delete</button>
+        </form>
+
+        <h3>List Images</h3>
+        <button id="list-files-button">List All Images</button>
+        <div id="file-list"></div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+        apiKey: "AIzaSyBkpgctBOnNbC17RZa41ulKjaaM2atRQSo",
+        authDomain: "fluttercrud-dce2f.firebaseapp.com",
+        projectId: "fluttercrud-dce2f",
+        storageBucket: "fluttercrud-dce2f.appspot.com",
+        messagingSenderId: "276144804049",
+        appId: "1:276144804049:web:4c6107f9d10072f0d135f0",
+        measurementId: "G-MMEC8LCSTH"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const storage = firebase.storage();
+
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('file-input');
+            const file = fileInput.files[0];
+            const storageRef = storage.ref('images/' + file.name);
+
+            storageRef.put(file).then(() => {
+                alert('Image uploaded successfully!');
+                fileInput.value = '';
+            }).catch((error) => {
+                alert('Error uploading image: ' + error.message);
+            });
+        });
+
+        document.getElementById('delete-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const fileName = document.getElementById('delete-file-name').value;
+            const storageRef = storage.ref('images/' + fileName);
+
+            storageRef.delete().then(() => {
+                alert('Image deleted successfully!');
+                document.getElementById('delete-form').reset();
+            }).catch((error) => {
+                alert('Error deleting image: ' + error.message);
+            });
+        });
+
+        document.getElementById('list-files-button').addEventListener('click', function() {
+            const storageRef = storage.ref('images');
+            storageRef.listAll().then((result) => {
+                const fileList = document.getElementById('file-list');
+                fileList.innerHTML = '';
+                result.items.forEach((itemRef) => {
+                    itemRef.getDownloadURL().then((url) => {
+                        fileList.innerHTML += `
+                            <div>
+                                <img src="${url}" alt="${itemRef.name}" style="width: 100px; height: auto;">
+                                <p>${itemRef.name}</p>
+                            </div>
+                        `;
+                    });
+                });
+            }).catch((error) => {
+                alert('Error listing images: ' + error.message);
+            });
+        });
+    </script>
+</body>
+</html>

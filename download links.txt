@@ -1,0 +1,9 @@
+cloudsim:
+cloudsim: https://github.com/Cloudslab/cloudsim/releases/tag/5.0
+common math library: https://commons.apache.org/proper/commons-math/download_math.cgi
+
+cloud analyst:
+cloud analyst: https://sourceforge.net/projects/cloudanalystnetbeans/
+apache netbeans: https://netbeans.apache.org/front/main/download/nb21/
+
+
